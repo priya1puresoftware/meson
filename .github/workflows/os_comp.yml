@@ -35,9 +35,6 @@ jobs:
       matrix:
         cfg:
           - { name: Arch Linux,       id: arch     }
-          - { name: CUDA (on Arch),   id: cuda     }
-          - { name: Fedora,           id: fedora   }
-          - { name: OpenSUSE,         id: opensuse }
           - { name: Ubuntu Bionic,    id: bionic   }
     container: mesonbuild/${{ matrix.cfg.id }}:latest
     env:
@@ -105,6 +102,7 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
+          uname -m 
           export HOME=/root
 
           export CC=$CC
