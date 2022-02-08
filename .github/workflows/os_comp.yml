@@ -25,7 +25,6 @@ on:
       - ".github/workflows/images.yml"
       - ".github/workflows/os_comp.yml"
       - "run_unittests.py"
-
 jobs:
   arch:
     name: ${{ matrix.cfg.name }}
