@@ -70,15 +70,4 @@ jobs:
               python3 -m pip install ninja && \
               ./run_tests.py && \
               
-           
-    steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
-      with:
-        python-version: '3.x'
-    - run: pip install meson ninja
-    - run: meson setup builddir/
-      env:
-        CC: gcc
-    - run: meson test -C builddir/ -v
-    - uses: actions/upload-artifact@v1
+
