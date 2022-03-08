@@ -70,4 +70,5 @@ jobs:
               python3 -m pip install meson 
               python3 -m pip install ninja
               ./run_tests.py
+              deactivate
               
