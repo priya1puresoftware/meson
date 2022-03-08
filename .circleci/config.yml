@@ -25,6 +25,7 @@ jobs:
              python3 -m pip install meson 
              python3 -m pip install ninja
              pip3 install jsonschema
+             sudo apt-get install --reinstall pkg-config cmake-data
              ./run_tests.py
 workflows:
   version: 2.1
