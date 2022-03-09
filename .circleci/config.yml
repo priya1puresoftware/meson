@@ -8,9 +8,6 @@ executors:
   meson_ubuntu_builder:
     docker:
       - image: your_dockerhub_username/ubuntu-sys
-    machine:
-      image: ubuntu-2004:202101-01
-    resource_class: arm.medium
 jobs:
   manylinux2014-aarch64:
     parameters:
