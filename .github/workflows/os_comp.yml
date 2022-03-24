@@ -48,6 +48,7 @@ jobs:
       run: bash -c 'source /ci/env_vars.sh; cd $GITHUB_WORKSPACE; ./tools/run_with_cov.py ./run_tests.py $CI_ARGS'
     - name: Upload coverage report
       run: ./ci/upload_cov.sh "OS Comp [${{ matrix.cfg.name }}]"
+      
   test_arm64: 
      runs-on: ubuntu-latest
      strategy:
@@ -83,5 +84,3 @@ jobs:
                 export MESON_UNIT_TEST_BACKEND=ninja && \
                 ./run_tests.py && \
                 deactivate'
-
-
