@@ -61,5 +61,5 @@ jobs:
                 export MESON_UNIT_TEST_BACKEND=ninja && \
                 pip3 install jsonschema && \
                 pip3 install pytest && \
-                pytest && \
+              pytest && \
                 deactivate'
