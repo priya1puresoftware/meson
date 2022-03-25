@@ -49,7 +49,7 @@ jobs:
                docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
                arm64v8/ubuntu:20.04 \
                bash -exc 'apt-get update && apt-get -y install python3.8 curl git && \
-                apt-get update && apt-get install python3 && apt-get install python3-pip && \
+                apt-get update && apt-get install -y python3 && apt-get install -y python3-pip && \
                 python3.8 -m pip install --upgrade pip && \
                 python3.8 --version && \
                 uname -m && \
