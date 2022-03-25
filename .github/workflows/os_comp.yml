@@ -1,89 +1,35 @@
-name: linux
+name: Test
 
-concurrency:
-  group: linux-${{ github.head_ref }}
-  cancel-in-progress: true
-
-on:
-  push:
-    branches:
-      - master
-      # Stable branches such as 0.56 or the eventual 1.0
-      - '[0-9]+.[0-9]+'
-    paths:
-      - "mesonbuild/**"
-      - "test cases/**"
-      - "unittests/**"
-      - ".github/workflows/images.yml"
-      - ".github/workflows/os_comp.yml"
-      - "run_unittests.py"
-  pull_request:
-    paths:
-      - "mesonbuild/**"
-      - "test cases/**"
-      - "unittests/**"
-      - ".github/workflows/images.yml"
-      - ".github/workflows/os_comp.yml"
-      - "run_unittests.py"
+on: [push, pull_request]
 
 jobs:
-  arch:
-    name: ${{ matrix.cfg.name }}
+  test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        cfg:
-          - { name: Arch Linux,       id: arch     }
-    container: mesonbuild/${{ matrix.cfg.id }}:latest
-    env:
-      MESON_CI_JOBNAME: linux-${{ matrix.cfg.id }}-gcc
-
+        os:
+          - 'ubuntu-20.04'
+        python-version:
+          - '3.8'
+        arch:
+          - 'x86_64'
     steps:
     - uses: actions/checkout@v2
-    - name: Run tests
-      # All environment variables are stored inside the docker image in /ci/env_vars.sh
-      # They are defined in the `env` section in each image.json. CI_ARGS should be set
-      # via the `args` array ub the image.json
-      run: pip3 install pytest
-           pytest
-           bash -c 'source /ci/env_vars.sh; cd $GITHUB_WORKSPACE; ./tools/run_with_cov.py ./run_tests.py $CI_ARGS'
-    - name: Upload coverage report
-      run: ./ci/upload_cov.sh "OS Comp [${{ matrix.cfg.name }}]"
-      
-  test_arm64: 
-     runs-on: ubuntu-latest
-     strategy:
-      matrix:
-        python-version: [ 3.8]
-      fail-fast: false
-     steps:
-      - uses: actions/checkout@v2
-      - name: Set up QEMU
-        id: qemu
-        uses: docker/setup-qemu-action@v1
-      - name: Install and Run tests
-        run: |
-               docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
-               arm64v8/ubuntu:20.04 \
-               bash -exc 'apt-get update && apt-get -y install python3.8 curl git && \
-                ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && export DEBIAN_FRONTEND=noninteractive && apt-get install -y tzdata && dpkg-reconfigure --frontend noninteractive tzdata && \
-                apt-get -y install software-properties-common && add-apt-repository ppa:deadsnakes/ppa && apt-get -y update && \
-                apt install -y python3.8-venv && python3.8 -m venv venv38 && source venv38/bin/activate && \
-                python3.8 -m pip install --upgrade pip && \
-                python3.8 --version && \
-                uname -m && \
-                apt-get -y install make && \
-                apt-get -y install autoconf automake build-essential cmake libtool mercurial pkg-config && \
-                apt-get install libglib2.0-dev -y && \
-                apt-get install llvm-dev -y && \
-                apt-get install libpq-dev -y libxml2-dev -y libxslt1-dev -y python3-dev -y && \
-                apt-get install python-dev -y && \
-                apt-get install tachyon -y && \
-                python3.8 setup.py install && \
-                python3.8 -m pip install meson && \
-                python3.8 -m pip install pytest ninja && \
-                export MESON_UNIT_TEST_BACKEND=ninja && \
-                pip3 install pytest && \
-                pytest && \
-                deactivate'
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+        
+    - name: Install Dependencies
+      run: |
+        apt-get update && apt-get install python3 && apt install -y python3-pip
+        python3 setup.py install 
+        python3 -m pip install meson 
+        python3 -m pip install pytest ninja 
+        export MESON_UNIT_TEST_BACKEND=ninja 
+        pip3 install pytest 
+        
+    - name: test      
+      run: |
+        pytest
