@@ -25,11 +25,8 @@ jobs:
       run: |
         apt-get update && apt-get install python3 && apt install -y python3-pip
         python3 setup.py install 
+        export MESON_UNIT_TEST_BACKEND=ninja 
         python3 -m pip install meson 
         python3 -m pip install pytest ninja 
-        export MESON_UNIT_TEST_BACKEND=ninja 
         pip3 install pytest 
-        
-    - name: test      
-      run: |
         pytest
