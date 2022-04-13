@@ -1,38 +1,58 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@1.5.0
-executors:
-  # Your dependencies would go in the docker images that represent
-  # the Linux distributions you are supporting
-  meson_ubuntu_builder:
-    docker:
-      - image: your_dockerhub_username/ubuntu-sys
 jobs:
-  manylinux2014-aarch64:
-    parameters:
-      cibw_build:
-        type: string
-        default: "cp37-*"
-        
+  
+  build-medium-amd64:
     machine:
       image: ubuntu-2004:202101-01
-    resource_class: arm.medium        
-  meson_ubuntu_build:
-    executor: meson_ubuntu_builder
+   
+    working_directory: ~/python-lz4
     steps:
+      
+      
       - checkout
-      - run: meson setup builddir --backend ninja
-      - run: meson compile -C builddir
-      - run: meson test -C builddir
-      - ./run_tests.py
+      - run:
+          name: ️️🏗️ pip dev requirements
+          command: |
+             uname -m 
+             sudo apt-get update && sudo apt-get install -y python3.8 && sudo apt-get install -y python3-pip
+             sudo apt-get -y install autoconf automake build-essential cmake libtool mercurial pkg-config llvm-dev
+             python3.8 -m pip install --upgrade pip
+             python3.8 --version
+             python3.8 setup.py install
+             python3.8 -m pip install meson 
+             python3.8 -m pip install pytest ninja 
+             export MESON_UNIT_TEST_BACKEND=ninja 
+             pip3 install jsonschema
+             pip3 install pytest
+             ./run_tests.py
+             
+  build-medium-arm64:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+    working_directory: ~/python-lz4
+    steps:
+      
+      - checkout
+      - run:
+          name: ️️🏗️ pip dev requirements
+          command: |
+             uname -m 
+             sudo apt-get update && sudo apt-get install -y python3.8 && sudo apt-get install -y python3-pip
+             sudo apt-get -y install autoconf automake build-essential cmake libtool mercurial pkg-config llvm-dev
+             python3.8 -m pip install --upgrade pip
+             python3.8 --version
+             python3.8 setup.py install
+             python3.8 -m pip install meson 
+             python3.8 -m pip install pytest ninja 
+             export MESON_UNIT_TEST_BACKEND=ninja 
+             pip3 install jsonschema
+             pip3 install pytest
+             ./run_tests.py
 workflows:
-  version: 2.1
-  linux_workflow:
+  version: 2
+  python3.8:
     jobs:
-      - manylinux2014-aarch64:
-          matrix:
-            parameters:
-              cibw_build:
-                - "cp37*"    
-      - meson_ubuntu_build
+      - build-medium-amd64
+      - build-medium-arm64
