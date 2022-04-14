@@ -77,7 +77,7 @@ jobs:
                 apt-get install libglib2.0-dev -y && \
                 apt-get install llvm-dev -y && \
                 apt-get install libpq-dev -y libxml2-dev -y libxslt1-dev -y python3-dev -y && \
-                apt-get install python-dev -y && \
+                apt-get -y install python-dev libcpputest-dev nasm gfortran valac libvala-0.52-dev default-jdk openjdk-8-jdk  && \
                 apt-get install tachyon -y && \
                 apt-get install cython -y && \
                 apt-get install libatf-c++-2 -y && \
