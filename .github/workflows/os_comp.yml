@@ -73,7 +73,7 @@ jobs:
                 uname -m && \
                 apt-get -y install make && \
                 apt-get -y install autoconf automake build-essential cmake libtool mercurial pkg-config && \
-                 apt-get install libgmp-dev libmpfr-dev libmpc-dev && \
+                apt-get -y install libgmp-dev libmpfr-dev libmpc-dev && \
                 apt-get install libglib2.0-dev -y && \
                 apt-get install llvm-dev -y && \
                 apt-get install libpq-dev -y libxml2-dev -y libxslt1-dev -y python3-dev -y && \
