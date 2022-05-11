@@ -40,7 +40,7 @@ jobs:
                 sudo apt-get install tachyon -y
                 sudo apt-get install cython -y
                 sudo apt-get install libatf-c++-2 -y
-                sudo apt-get -y install gcc g++  dmd-compiler dub mono-complete dotnet-sdk mono-gmcs
+                sudo apt-get -y install gcc g++  dmd-compiler dub mono-complete dotnet-sdk
                 curl -fsS https://dlang.org/install.sh | bash -s dmd
                 sh <(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs) -y --default-toolchain beta
                 source $HOME/.cargo/env
@@ -86,7 +86,7 @@ jobs:
                 apt-get install tachyon -y && \
                 apt-get install cython -y && \
                 apt-get install libatf-c++-2 -y && \
-                apt-get -y install gcc g++  dmd-compiler dub mono-complete dotnet-sdk mono-gmcs && \
+                apt-get -y install gcc g++  dmd-compiler dub mono-complete dotnet-sdk && \
                 curl -fsS https://dlang.org/install.sh | bash -s dmd
                 sh <(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs) -y --default-toolchain beta && \
                 source $HOME/.cargo/env && \
