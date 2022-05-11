@@ -1,53 +1,55 @@
-name: linux
+name: Test
 
-concurrency:
-  group: linux-${{ github.head_ref }}
-  cancel-in-progress: true
-
-on:
-  push:
-    branches:
-      - master
-      # Stable branches such as 0.56 or the eventual 1.0
-      - '[0-9]+.[0-9]+'
-    paths:
-      - "mesonbuild/**"
-      - "test cases/**"
-      - "unittests/**"
-      - ".github/workflows/images.yml"
-      - ".github/workflows/os_comp.yml"
-      - "run_unittests.py"
-  pull_request:
-    paths:
-      - "mesonbuild/**"
-      - "test cases/**"
-      - "unittests/**"
-      - ".github/workflows/images.yml"
-      - ".github/workflows/os_comp.yml"
-      - "run_unittests.py"
+on: [push, pull_request]
 
 jobs:
-  arch:
-    name: ${{ matrix.cfg.name }}
+  test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        cfg:
-          - { name: Arch Linux,       id: arch     }
-    container: mesonbuild/${{ matrix.cfg.id }}:latest
-    env:
-      MESON_CI_JOBNAME: linux-${{ matrix.cfg.id }}-gcc
-
+        os:
+          - 'ubuntu-20.04'
+        python-version:
+          - '3.8'
+        arch:
+          - 'x86_64'
     steps:
     - uses: actions/checkout@v2
-    - name: Run tests
-      # All environment variables are stored inside the docker image in /ci/env_vars.sh
-      # They are defined in the `env` section in each image.json. CI_ARGS should be set
-      # via the `args` array ub the image.json
-      run: bash -c 'source /ci/env_vars.sh; cd $GITHUB_WORKSPACE; ./tools/run_with_cov.py ./run_tests.py $CI_ARGS'
-    - name: Upload coverage report
-      run: ./ci/upload_cov.sh "OS Comp [${{ matrix.cfg.name }}]"
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+        
+    - name: Install Dependencies
+      run: |
+                apt-get update && apt-get -y install python3.8 curl git
+                python3.8 -m pip install --upgrade pip
+                python3.8 --version
+                uname -m
+                apt-get -y install make
+                apt-get -y install autoconf automake build-essential cmake libtool mercurial pkg-config
+                apt-get -y install libgmp-dev libmpfr-dev libmpc-dev libgtest-dev libgtk-3-dev libgirepository1.0-dev
+                apt-get install libglib2.0-dev -y
+                apt-get install llvm-dev -y
+                apt-get install libpq-dev -y libxml2-dev -y libxslt1-dev -y python3-dev -y
+                apt-get -y install openssl libssl-dev libssl1.0 libgl1-mesa-dev libqt5x11extras5 qtcreator zlib1g-dev liblzma-dev libbz2-dev
+                apt-get -y install python-dev libcpputest-dev as31 nasm gfortran valac default-jdk openjdk-8-jdk mono-complete gobject-introspection gtk+-3.0 libboost-all-dev
+                apt-get install tachyon -y
+                apt-get install cython -y
+                apt-get install libatf-c++-2 -y
+                apt-get -y install gcc g++  dmd-compiler dub mono-complete dotnet-sdk mono-gmcs
+                curl -fsS https://dlang.org/install.sh | bash -s dmd
+                sh <(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs) -y --default-toolchain beta
+                source $HOME/.cargo/env
+                python3.8 setup.py install
+                python3.8 -m pip install meson
+                python3.8 -m pip install pytest ninja
+                export MESON_UNIT_TEST_BACKEND=ninja
+        
+    - name: test      
+      run: |
+        ./run_tests.py
 
   test_arm64: 
      runs-on: ubuntu-latest
@@ -83,7 +85,7 @@ jobs:
                 apt-get install cython -y && \
                 apt-get install libatf-c++-2 -y && \
                 apt-get -y install gcc g++  dmd-compiler dub mono-complete dotnet-sdk mono-gmcs && \
-                curl -fsS https://dlang.org/install.sh | bash -s dmd
+                curl -fsS https://dlang.org/install.sh | bash -s dmd && \
                 sh <(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs) -y --default-toolchain beta && \
                 source $HOME/.cargo/env && \
                 python3.8 setup.py install && \
