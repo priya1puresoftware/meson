@@ -48,7 +48,6 @@ jobs:
                 python3.8 -m pip install meson
                 python3.8 -m pip install pytest ninja
                 export MESON_UNIT_TEST_BACKEND=ninja
-                ./run_tests.py && \
 
     - name: test      
       run: |
