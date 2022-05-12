@@ -52,7 +52,7 @@ jobs:
 
     - name: test      
       run: |
-        ./run_tests.py
+                ./run_tests.py
 
   test_arm64: 
      runs-on: ubuntu-latest
@@ -97,5 +97,3 @@ jobs:
                 export MESON_UNIT_TEST_BACKEND=ninja && \
                 ./run_unittests.py && \
                 deactivate'
-        
-               
